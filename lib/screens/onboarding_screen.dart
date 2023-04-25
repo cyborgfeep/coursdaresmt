@@ -1,6 +1,8 @@
-import 'package:coursdaresmt/models/onboarding.dart';
+import 'package:coursdaresmt/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intro_slider/intro_slider.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
+
+import '../utils/constants.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}) : super(key: key);
@@ -10,70 +12,28 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
-  List<OnBoarding> onBoardingList = [];
-
-  List<Widget> generateListCustomTabs(List<OnBoarding> obList) {
-    return List.generate(
-      obList.length,
-      (index) => Container(
-        color: Colors.white,
-        width: double.infinity,
-        height: double.infinity,
-        child: ListView(
-          children: <Widget>[
-            const SizedBox(height: 20),
-            Image.network(
-              obList[index].photo!,
-              width: 150.0,
-              height: 150.0,
-            ),
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Text(
-                obList[index].title!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              child: Text(
-                obList[index].desc!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  List<Widget> onBoardingList = [];
+  late int selectedPage;
+  late final PageController _pageController;
 
   @override
   void initState() {
+    selectedPage = 0;
+    _pageController = PageController(initialPage: selectedPage);
     super.initState();
     onBoardingList = [
-      OnBoarding(
-          photo: "https://picsum.photos/${300 + 0}",
+       const OnBoardingWidget(
+          photo: "ob1.jpg",
           title: "Dalal ak Jam ci Orange et moi",
           desc:
               "L'application pour gérer vos offres internet et mobile facilement."),
-      OnBoarding(
-          photo: "https://picsum.photos/${300 + 1}",
+      const OnBoardingWidget(
+          photo: "ob2.jpg",
           title: "Suivre ma consommation",
           desc:
               "L'application pour gérer vos offres internet et mobile facilement."),
-      OnBoarding(
-          photo: "https://picsum.photos/${300 + 2}",
+      const OnBoardingWidget(
+          photo: "ob3.jpg",
           title: "Acheter du crédit et des pass",
           desc:
               "L'application pour gérer vos offres internet et mobile facilement.")
@@ -85,25 +45,119 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            SizedBox(
+                height: 430,
+                child: Stack(
+                  children: [
+                    PageView(
+                      controller: _pageController,
+                      onPageChanged: (page) {
+                        setState(() {
+                          selectedPage = page;
+                        });
+                      },
+                      children: onBoardingList,
+                    ),
+                    Positioned(
+                      bottom: 175,
+                      left: 0,
+                      right: 0,
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: PageViewDotIndicator(
+                          currentItem: selectedPage,
+                          count: 3,
+                          unselectedColor:
+                              const Color(0xffff6e01).withOpacity(0.5),
+                          selectedColor: const Color(0xffff6e01),
+                          duration: const Duration(milliseconds: 200),
+                          boxShape: BoxShape.circle,
+                          size: const Size(8, 8),
+                          unselectedSize: const Size(6, 6),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const LoginScreen();
+                    },));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xffff6e01),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    fixedSize: Size(MediaQuery.of(context).size.width, 50),
+                  ),
+                  child: const Text("J'accède")),
+            )
+          ],
+        ));
+  }
+}
+
+class OnBoardingWidget extends StatelessWidget {
+  final String photo, title, desc;
+
+  const OnBoardingWidget(
+      {Key? key, required this.photo, required this.title, required this.desc})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 32,
+          vertical: 15
+        ),
+        child: Center(
+            child: Column(
+          children: [
+            Image.asset(
+              "$imgUri$photo",
+              width: 200.0,
+              height: 200.0,
+            ),
+            const SizedBox(height: 30),
             Container(
-              height: 430,
-              child: IntroSlider(
-                key: UniqueKey(),
-                listCustomTabs: generateListCustomTabs(onBoardingList),
-                isShowNextBtn: false,
-                isShowSkipBtn: false,
-                isShowDoneBtn: false,
-                isShowPrevBtn: false,
-                indicatorConfig: const IndicatorConfig(
-                  colorIndicator: Color(0xffff6e01),
-                  sizeIndicator: 8.0,
-                  typeIndicatorAnimation: TypeIndicatorAnimation.sizeTransition,
+              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            ElevatedButton(onPressed: () {}, child: Text("J'accède"))
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Text(
+                desc,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
           ],
-        ));
+        )),
+      ),
+    );
   }
 }

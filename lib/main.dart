@@ -1,4 +1,3 @@
-import 'package:coursdaresmt/screens/home_screen.dart';
 import 'package:coursdaresmt/screens/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

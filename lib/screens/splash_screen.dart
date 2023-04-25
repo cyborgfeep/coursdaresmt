@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:coursdaresmt/screens/home_screen.dart';
+import 'package:coursdaresmt/screens/navigation_screen.dart';
 import 'package:coursdaresmt/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(const Duration(seconds: 3), () {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return const OnBoardingScreen();
+        return const NavigationScreen();
       },));
     });
   }
